@@ -1,0 +1,22 @@
+*** TemporalFusionTransformer params ***
+# dropout_rate = 0.4
+# hidden_layer_size = 10
+# learning_rate = 0.001
+# max_gradient_norm = 100.0
+# minibatch_size = 128
+# num_heads = 1
+# stack_size = 1
+# total_time_steps = 257
+# num_encoder_steps = 252
+# num_epochs = 100
+# early_stopping_patience = 5
+# multiprocessing_workers = 5
+# column_definition = [('Symbol', <DataTypes.CATEGORICAL: 1>, <InputTypes.ID: 4>), ('Datetime', <DataTypes.DATE: 2>, <InputTypes.TIME: 5>), ('Open', <DataTypes.REAL_VALUED: 0>, <InputTypes.OBSERVED_INPUT: 1>), ('OpenCloseDifference', <DataTypes.REAL_VALUED: 0>, <InputTypes.OBSERVED_INPUT: 1>), ('ATR', <DataTypes.REAL_VALUED: 0>, <InputTypes.OBSERVED_INPUT: 1>), ('RSI', <DataTypes.REAL_VALUED: 0>, <InputTypes.OBSERVED_INPUT: 1>), ('Close', <DataTypes.REAL_VALUED: 0>, <InputTypes.TARGET: 0>), ('HourOfDay', <DataTypes.CATEGORICAL: 1>, <InputTypes.KNOWN_INPUT: 2>), ('DayOfWeek', <DataTypes.CATEGORICAL: 1>, <InputTypes.KNOWN_INPUT: 2>), ('DayOfMonth', <DataTypes.CATEGORICAL: 1>, <InputTypes.KNOWN_INPUT: 2>), ('StatSymbol', <DataTypes.CATEGORICAL: 1>, <InputTypes.STATIC_INPUT: 3>)]
+# input_size = 13
+# output_size = 1
+# category_counts = [10, 5, 31, 20]
+# input_obs_loc = [4]
+# static_input_loc = [8]
+# known_regular_inputs = []
+# known_categorical_inputs = [0, 1, 2, 3]
+# model_folder = output\saved_models\ohlc\main
