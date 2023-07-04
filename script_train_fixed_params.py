@@ -41,6 +41,8 @@ import libs.utils as utils
 import numpy as np
 import pandas as pd
 import tensorflow.compat.v1 as tf
+from cache import plots
+from matplotlib import pyplot as plt
 
 ExperimentConfig = expt_settings.configs.ExperimentConfig
 HyperparamOptManager = libs.hyperparam_opt.HyperparamOptManager
@@ -68,7 +70,7 @@ def main(expt_name,
     """
 
     num_repeats = 1
-
+    print(os.path.join('cache', 'model_folder'))
     if not isinstance(data_formatter, data_formatters.base.GenericDataFormatter):
         raise ValueError(
             "Data formatters should inherit from" +
@@ -131,7 +133,7 @@ def main(expt_name,
             model.fit()
 
             val_loss = model.evaluate()
-
+            model.save(model_folder=os.path.join('cache', 'model_folder'))
             if val_loss < best_loss:
                 opt_manager.update_score(params, val_loss, model)
                 best_loss = val_loss
@@ -148,7 +150,8 @@ def main(expt_name,
         model.load(opt_manager.hyperparam_folder)
 
         print("Computing best validation loss")
-        val_loss = model.evaluate(valid)
+        print(valid)
+        val_loss = model.evaluate(data=valid)
 
         print("Computing test loss")
         output_map = model.predict(test, return_targets=True)
@@ -178,9 +181,10 @@ def main(expt_name,
 
     for k in best_params:
         print(k, " = ", best_params[k])
-    print()
+
     print("Normalised Quantile Loss for Test Data: P50={}, P90={}".format(
         p50_loss.mean(), p90_loss.mean()))
+    plots.metrics(predictions=output_map, truth=test['Close'].tolist())
 
 
 if __name__ == "__main__":
@@ -235,4 +239,4 @@ if __name__ == "__main__":
         model_folder=os.path.join(config.model_folder, "fixed"),
         data_csv_path=config.data_csv_path,
         data_formatter=formatter,
-        use_testing_mode=True)  # Change to false to use original default params
+        use_testing_mode=False)  # Change to false to use original default params

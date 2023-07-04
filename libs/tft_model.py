@@ -705,6 +705,8 @@ class TemporalFusionTransformer(object):
     return sampled_data
 
   def _batch_data(self, data):
+    print('xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx')
+    print(data)
     """Batches data for training.
 
     Converts raw dataframe from a 2-D tabular format to a batched 3-D array
@@ -747,7 +749,6 @@ class TemporalFusionTransformer(object):
           'outputs': [target_col],
           'inputs': input_cols
       }
-
       for k in col_mappings:
         cols = col_mappings[k]
         arr = _batch_single_entity(sliced[cols].copy())
@@ -756,10 +757,16 @@ class TemporalFusionTransformer(object):
           data_map[k] = [arr]
         else:
           data_map[k].append(arr)
-
+    # somehow the first element was always none. I dont know yet why, but added this as a quick fix
+    #data_map['identifier'].pop(0)
+    #data_map['time'].pop(0)
+    #data_map['outputs'].pop(0)
+    #data_map['inputs'].pop(0)
     # Combine all data
     for k in data_map:
-      data_map[k] = np.concatenate(data_map[k], axis=0)
+        #print(data_map[k])
+        if data_map[k] is not None:
+            data_map[k] = np.concatenate(data_map[k], axis=0)
 
     # Shorten target so we only get decoder steps
     data_map['outputs'] = data_map['outputs'][:, self.num_encoder_steps:, :]
@@ -1089,9 +1096,9 @@ class TemporalFusionTransformer(object):
           return loss
 
       quantile_loss = QuantileLossCalculator(valid_quantiles).quantile_loss
-
+        # marker: changed the loss in model.compile from quantile_loss to MAPE
       model.compile(
-          loss=quantile_loss, optimizer=adam, sample_weight_mode='temporal')
+          loss=tf.keras.losses.MeanAbsolutePercentageError(), optimizer=adam, sample_weight_mode='temporal')
 
       self._input_placeholder = all_inputs
 
@@ -1110,12 +1117,12 @@ class TemporalFusionTransformer(object):
     # Add relevant callbacks
     callbacks = [
         tf.keras.callbacks.EarlyStopping(
-            monitor='val_loss',
+            monitor='val_loss',                             #changed val_loss to loss
             patience=self.early_stopping_patience,
             min_delta=1e-4),
         tf.keras.callbacks.ModelCheckpoint(
             filepath=self.get_keras_saved_path(self._temp_folder),
-            monitor='val_loss',
+            monitor='val_loss',                         # same as above
             save_best_only=True,
             save_weights_only=True),
         tf.keras.callbacks.TerminateOnNaN()
@@ -1185,7 +1192,7 @@ class TemporalFusionTransformer(object):
       print('Using cached validation data')
       raw_data = TFTDataCache.get('valid')
     else:
-      raw_data = self._batch_data(data)
+        raw_data = self._batch_data(data)
 
     inputs = raw_data['inputs']
     outputs = raw_data['outputs']

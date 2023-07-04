@@ -164,7 +164,6 @@ def main(expt_name, use_gpu, restart_opt, model_folder, hyperparam_iterations,
   print("Normalised Quantile Loss for Test Data: P50={}, P90={}".format(
       p50_loss.mean(), p90_loss.mean()))
 
-
 if __name__ == "__main__":
 
   def get_args():
