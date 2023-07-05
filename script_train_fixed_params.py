@@ -156,7 +156,7 @@ def main(expt_name,
         print("Computing test loss")
         output_map = model.predict(test, return_targets=True)
         #np.savetxt("output_mape.csv", output_map, delimiter=",")
-        with open('output_mape.pickle', 'wb') as f:
+        with open('output_mas.pickle', 'wb') as f:
             pkl.dump(output_map, f)
         targets = data_formatter.format_predictions(output_map["targets"])
         p50_forecast = data_formatter.format_predictions(output_map["p50"])

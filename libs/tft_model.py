@@ -1098,7 +1098,7 @@ class TemporalFusionTransformer(object):
       quantile_loss = QuantileLossCalculator(valid_quantiles).quantile_loss
         # marker: changed the loss in model.compile from quantile_loss to MAPE
       model.compile(
-          loss=tf.keras.losses.MeanAbsolutePercentageError(), optimizer=adam, sample_weight_mode='temporal')
+          loss=tf.keras.losses.MeanAbsoluteError(), optimizer=adam, sample_weight_mode='temporal')
 
       self._input_placeholder = all_inputs
 
