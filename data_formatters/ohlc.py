@@ -24,6 +24,7 @@ import libs.utils as utils
 import sklearn.preprocessing
 import numpy as np
 import pandas as pd
+import pickle as pkl
 
 GenericDataFormatter = data_formatters.base.GenericDataFormatter
 DataTypes = data_formatters.base.DataTypes

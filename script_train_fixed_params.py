@@ -28,7 +28,7 @@ Command line args:
 
 
 """
-
+import pickle as pkl
 import argparse
 import datetime as dte
 import os
@@ -155,7 +155,9 @@ def main(expt_name,
 
         print("Computing test loss")
         output_map = model.predict(test, return_targets=True)
-        np.savetxt("output_mape.csv", output_map, delimiter=",")
+        #np.savetxt("output_mape.csv", output_map, delimiter=",")
+        with open('output_mape.pickle', 'wb') as f:
+            pkl.dump(output_map, f)
         targets = data_formatter.format_predictions(output_map["targets"])
         p50_forecast = data_formatter.format_predictions(output_map["p50"])
         p90_forecast = data_formatter.format_predictions(output_map["p90"])
