@@ -32,6 +32,7 @@ import libs.utils as utils
 import numpy as np
 import pandas as pd
 import tensorflow.compat.v1 as tf
+import pickle as pkl
 
 ExperimentConfig = expt_settings.configs.ExperimentConfig
 HyperparamOptManager = libs.hyperparam_opt.HyperparamOptManager
@@ -159,7 +160,9 @@ def main(expt_name, use_gpu, restart_opt, model_folder, hyperparam_iterations,
   print("Params:")
 
   for k in best_params:
-    print(k, " = ", best_params[k])
+        print(k, " = ", best_params[k])
+  with open('best_params.pickle', 'wb') as f:
+        pkl.dump(best_params, f)
   print()
   print("Normalised Quantile Loss for Test Data: P50={}, P90={}".format(
       p50_loss.mean(), p90_loss.mean()))
