@@ -134,6 +134,7 @@ def main(expt_name,
 
             val_loss = model.evaluate()
             model.save(model_folder=os.path.join('cache', 'model_folder'))
+            model.save("trained_model.keras")
             if val_loss < best_loss:
                 opt_manager.update_score(params, val_loss, model)
                 best_loss = val_loss
@@ -156,9 +157,9 @@ def main(expt_name,
         print("Computing test loss")
         output_map = model.predict(test, return_targets=True)
         #np.savetxt("output_mape.csv", output_map, delimiter=",")
-        with open('output_map.pickle', 'wb') as f:
-            pkl.dump(output_map, f)
         targets = data_formatter.format_predictions(output_map["targets"])
+        with open('targets.pickle', 'wb') as f:
+            pkl.dump(targets, f)
         p50_forecast = data_formatter.format_predictions(output_map["p50"])
         p90_forecast = data_formatter.format_predictions(output_map["p90"])
 
