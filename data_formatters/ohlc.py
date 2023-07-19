@@ -121,7 +121,10 @@ class OHLCFormatter(GenericDataFormatter):
         {InputTypes.ID, InputTypes.TIME})
 
     data = df[real_inputs].values
-    self._real_scalers = sklearn.preprocessing.StandardScaler().fit(data)
+    scaler = sklearn.preprocessing.StandardScaler().fit(data)
+    with open('scaler.pickle', 'wb') as f:
+        pkl.dump(scaler, f)
+    self._real_scalers = scaler
     self._target_scaler = sklearn.preprocessing.StandardScaler().fit(
         df[[target_column]].values)  # used for predictions
 
