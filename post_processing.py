@@ -33,7 +33,9 @@ for i in range(0,len(test)):
     #if prediction mean is higher than t0, sell, if lower, buy
 
 file = open('output_mape.pickle', 'rb')
-
+# mean capital gain, number of trades
+# 1. curves capital, stock substract capital from market curve, then average
+# 2. number of trades (average number of trades per day) all curves as percentage difference to first day 0
 data = pkl.load(file)
 targets = data['targets']
 mean = targets[['t+0', 't+1', 't+2', 't+3', 't+4']].mean(axis=1)

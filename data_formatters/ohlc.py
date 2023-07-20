@@ -219,11 +219,11 @@ class OHLCFormatter(GenericDataFormatter):
     """Returns default optimised model parameters."""
 
     model_params = {
-        'dropout_rate': 0.3,
-        'hidden_layer_size': 160,
+        'dropout_rate': 0.1,
+        'hidden_layer_size': 10,
         'learning_rate': 0.01,
         'minibatch_size': 64,
-        'max_gradient_norm': 0.01,
+        'max_gradient_norm': 1.0,
         'num_heads': 1,
         'stack_size': 1
     }
