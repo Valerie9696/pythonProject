@@ -1352,7 +1352,7 @@ class TemporalFusionTransformer(object):
     # Allows for direct serialisation of tensorflow variables to avoid spurious
     # issue with Keras that leads to different performance evaluation results
     # when model is reloaded (https://github.com/keras-team/keras/issues/4875).
-    tf.keras.models.save_model(model_folder)
+    tf.keras.models.save_model(filepath=model_folder)
     #utils.save(
      #   tf.compat.v1.keras.backend.get_session(),
       #  model_folder,
