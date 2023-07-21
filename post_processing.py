@@ -28,10 +28,10 @@ print('Formatting train-valid-test splits.')
 #load the model
 model_folder = os.path.join('output', 'saved_models', 'ohlc', 'fixed')
 session = tf.compat.v1.keras.backend.get_session()
-model = tft_model.TemporalFusionTransformer()
-checkpoint_path = os.path.join('output', 'saved_models', 'ohlc', 'fixed', 'checkpoint')
-model.load_weights(checkpoint_path)
-#model = tf.keras.models.load_model(filepath=model_folder, compile=False)#pkl.load('model.pickle')#utils.load(tf_session=tf.compat.v1.keras.backend.get_session(),model_folder=model_folder, cp_name='TemporalFusionTransformer', scope='TemporalFusionTransformer')
+#model = tft_model.TemporalFusionTransformer()
+#checkpoint_path = os.path.join('output', 'saved_models', 'ohlc', 'fixed', 'checkpoint')
+#model.load_weights(checkpoint_path)
+model = tf.keras.models.load_model(filepath=model_folder, compile=False)#pkl.load('model.pickle')#utils.load(tf_session=tf.compat.v1.keras.backend.get_session(),model_folder=model_folder, cp_name='TemporalFusionTransformer', scope='TemporalFusionTransformer')
 #trained_model = keras.models.load_model("trained_model.keras")
 
 for i in range(0,len(test)):
