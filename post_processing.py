@@ -28,12 +28,12 @@ print('Formatting train-valid-test splits.')
 #load the model
 model_folder = os.path.join('output', 'saved_models', 'ohlc', 'fixed')
 session = tf.compat.v1.keras.backend.get_session()
-model = utils.load(tf_session=tf.compat.v1.keras.backend.get_session(),model_folder=model_folder, cp_name='TemporalFusionTransformer', scope='TemporalFusionTransformer')
+model = tf.keras.models.load_model(model_folder)#pkl.load('model.pickle')#utils.load(tf_session=tf.compat.v1.keras.backend.get_session(),model_folder=model_folder, cp_name='TemporalFusionTransformer', scope='TemporalFusionTransformer')
 #trained_model = keras.models.load_model("trained_model.keras")
 
 for i in range(0,len(test)):
     row = test.iloc[i]
-    #trained_model.predict(row)
+    pred = model.predict(row)
     #if prediction mean is higher than t0, sell, if lower, buy
 
 file = open('output_mape.pickle', 'rb')
