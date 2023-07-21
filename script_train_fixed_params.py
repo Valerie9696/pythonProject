@@ -160,6 +160,8 @@ def main(expt_name,
         targets = data_formatter.format_predictions(output_map["targets"])
         with open('targets.pickle', 'wb') as f:
             pkl.dump(targets, f)
+        with open('model.pickle', 'wb') as m:
+            pkl.dump(model, m)
         p50_forecast = data_formatter.format_predictions(output_map["p50"])
         p90_forecast = data_formatter.format_predictions(output_map["p90"])
 

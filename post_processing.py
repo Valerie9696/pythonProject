@@ -4,6 +4,7 @@ import pandas as pd
 import tensorflow as tf
 import os
 from data_formatters import ohlc
+from libs import utils
 
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -25,6 +26,9 @@ test = df.loc[(index >= test_boundary)] #& (df.index <= '2019-06-28')]
 print('Formatting train-valid-test splits.')
 
 #load the model
+model_folder = os.path.join('output', 'saved_models', 'ohlc', 'fixed')
+session = tf.compat.v1.keras.backend.get_session()
+model = utils.load(tf_session=tf.compat.v1.keras.backend.get_session(),model_folder=model_folder, cp_name='TemporalFusionTransformer', scope='TemporalFusionTransformer')
 #trained_model = keras.models.load_model("trained_model.keras")
 
 for i in range(0,len(test)):
