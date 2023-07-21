@@ -33,6 +33,8 @@ import argparse
 import datetime as dte
 import os
 
+import joblib
+
 import data_formatters.base
 import expt_settings.configs
 import libs.hyperparam_opt
@@ -124,6 +126,8 @@ def main(expt_name,
 
             params = opt_manager.get_next_parameters()
             model = ModelClass(params, use_cudnn=use_gpu)
+            mf = os.path.join('output', 'saved_models', 'ohlc', 'fixed')
+            #model.load(model_folder=mf, use_keras_loadings=True)
 
             if not model.training_data_cached():
                 model.cache_batched_data(train, "train", num_samples=train_samples)
@@ -149,7 +153,7 @@ def main(expt_name,
         model = ModelClass(best_params, use_cudnn=use_gpu)
 
         model.load(opt_manager.hyperparam_folder)
-
+        joblib.dump(model, 'model.pkl')
         print("Computing best validation loss")
         print(valid)
         val_loss = model.evaluate(data=valid)

@@ -944,7 +944,7 @@ class TemporalFusionTransformer(object):
     # LSTM layer
     def get_lstm(return_state):
       """Returns LSTM cell initialized with default parameters."""
-      if not self.use_cudnn:
+      if self.use_cudnn:    # marker inserted not
         lstm = tf.compat.v1.keras.layers.CuDNNLSTM(
             self.hidden_layer_size,
             return_sequences=True,
@@ -1353,12 +1353,12 @@ class TemporalFusionTransformer(object):
     # issue with Keras that leads to different performance evaluation results
     # when model is reloaded (https://github.com/keras-team/keras/issues/4875).
     #tf.keras.models.save_model(model= self.model, filepath=model_folder)
-    self.model.save(filepath=model_folder)
-    #utils.save(
-     #   tf.compat.v1.keras.backend.get_session(),
-      #  model_folder,
-       # cp_name=self.name,
-        #scope=self.name)
+    #self.model.save(filepath=model_folder)
+    utils.save(
+        tf.compat.v1.keras.backend.get_session(),
+        model_folder,
+        cp_name=self.name,
+        scope=self.name)
 
   def load(self, model_folder, use_keras_loadings=False):
     """Loads TFT weights.
