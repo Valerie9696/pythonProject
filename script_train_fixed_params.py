@@ -139,10 +139,7 @@ def main(expt_name,
             val_loss = model.evaluate()
             model.save(model_folder=os.path.join('cache', 'model_folder'))
             model.save("trained_model.keras")
-            model_json = model.model.to_json()
-            with open("model_json.json", "w") as json_file:
-                json_file.write(model_json)
-            model.model.save_weights("model_weights.h5")
+
             if val_loss < best_loss:
                 opt_manager.update_score(params, val_loss, model)
                 best_loss = val_loss
@@ -150,7 +147,7 @@ def main(expt_name,
             tf.keras.backend.set_session(default_keras_session)
 
     print("*** Running tests ***")
-    #joblib.dump(opt_manager, 'job_opt.pkl')
+    joblib.dump(opt_manager, 'job_opt.pkl')
     dill.dump(opt_manager, 'opt_manager.dill')
     tf.reset_default_graph()
     with tf.Graph().as_default(), tf.Session(config=tf_config) as sess:
@@ -197,6 +194,8 @@ def main(expt_name,
 
     for k in best_params:
         print(k, " = ", best_params[k])
+    joblib.dump(opt_manager, 'job_opt.pkl')
+    dill.dump(opt_manager, 'opt_manager.dill')
 
     print("Normalised Quantile Loss for Test Data: P50={}, P90={}".format(
         p50_loss.mean(), p90_loss.mean()))
