@@ -121,9 +121,6 @@ def main(expt_name,
 
         tf.reset_default_graph()
         with tf.Graph().as_default(), tf.Session(config=tf_config) as sess:
-            joblib.dump(opt_manager, 'job_opt.pkl')
-            with open('opt_manager.pickle', 'wb') as f:
-                pkl.dump(opt_manager, f)
             tf.keras.backend.set_session(sess)
 
             params = opt_manager.get_next_parameters()
@@ -148,6 +145,9 @@ def main(expt_name,
             tf.keras.backend.set_session(default_keras_session)
 
     print("*** Running tests ***")
+    joblib.dump(opt_manager, 'job_opt.pkl')
+    with open('opt_manager.pickle', 'wb') as f:
+        pkl.dump(opt_manager, f)
     tf.reset_default_graph()
     with tf.Graph().as_default(), tf.Session(config=tf_config) as sess:
         tf.keras.backend.set_session(sess)
