@@ -139,7 +139,6 @@ def main(expt_name,
             val_loss = model.evaluate()
             model.save(model_folder=os.path.join('cache', 'model_folder'))
             model.save("trained_model.keras")
-            model.model.save(os.path.join('saves','model'))
             model_json = model.model.to_json()
             with open("model_json.json", "w") as json_file:
                 json_file.write(model_json)

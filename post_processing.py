@@ -13,7 +13,14 @@ import libs
 import pandas as pd
 import matplotlib.pyplot as plt
 
-
+from keras.models import model_from_json
+with open("model_json.json", "r") as json_file:
+    loaded_model_json = json_file.read()
+    json_file.close()
+loaded_model = model_from_json(loaded_model_json)
+# load weights into new model
+loaded_model.load_weights("model_weights.h5")
+print("Loaded model from disk")
 
 # load dataset
 df = pd.read_csv(os.path.join('output','data','ohlc','ohlc.csv'))
