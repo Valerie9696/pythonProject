@@ -34,6 +34,7 @@ import datetime as dte
 import os
 
 import joblib
+import dill
 
 import data_formatters.base
 import expt_settings.configs
@@ -138,6 +139,7 @@ def main(expt_name,
             val_loss = model.evaluate()
             model.save(model_folder=os.path.join('cache', 'model_folder'))
             model.save("trained_model.keras")
+            dill.dump(model, 'model.dill')
             if val_loss < best_loss:
                 opt_manager.update_score(params, val_loss, model)
                 best_loss = val_loss
@@ -145,9 +147,9 @@ def main(expt_name,
             tf.keras.backend.set_session(default_keras_session)
 
     print("*** Running tests ***")
-    joblib.dump(opt_manager, 'job_opt.pkl')
-    with open('opt_manager.pickle', 'wb') as f:
-        pkl.dump(opt_manager, f)
+    #joblib.dump(opt_manager, 'job_opt.pkl')
+    #with open('opt_manager.pickle', 'wb') as f:
+     #   pkl.dump(opt_manager, f)
     tf.reset_default_graph()
     with tf.Graph().as_default(), tf.Session(config=tf_config) as sess:
         tf.keras.backend.set_session(sess)
