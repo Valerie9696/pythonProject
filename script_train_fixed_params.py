@@ -144,12 +144,12 @@ def main(expt_name,
                 best_loss = val_loss
 
             tf.keras.backend.set_session(default_keras_session)
-    joblib.dump(opt_manager, 'job_opt.pkl')
-    with open('opt_manager.pickle', 'wb') as f:
-        pkl.dump(opt_manager, f)
     print("*** Running tests ***")
     tf.reset_default_graph()
     with tf.Graph().as_default(), tf.Session(config=tf_config) as sess:
+        joblib.dump(opt_manager, 'job_opt.pkl')
+        with open('opt_manager.pickle', 'wb') as f:
+            pkl.dump(opt_manager, f)
         tf.keras.backend.set_session(sess)
         best_params = opt_manager.get_best_params()
         model = ModelClass(best_params, use_cudnn=use_gpu)
