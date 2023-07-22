@@ -47,7 +47,7 @@ from cache import plots
 from matplotlib import pyplot as plt
 
 ExperimentConfig = expt_settings.configs.ExperimentConfig
-
+HyperparamOptManager = libs.hyperparam_opt.HyperparamOptManager
 ModelClass = libs.tft_model.TemporalFusionTransformer
 tf.experimental.output_all_intermediates(True)
 
@@ -121,7 +121,9 @@ def main(expt_name,
 
         tf.reset_default_graph()
         with tf.Graph().as_default(), tf.Session(config=tf_config) as sess:
-
+            joblib.dump(opt_manager, 'job_opt.pkl')
+            with open('opt_manager.pickle', 'wb') as f:
+                pkl.dump(opt_manager, f)
             tf.keras.backend.set_session(sess)
 
             params = opt_manager.get_next_parameters()
@@ -144,12 +146,10 @@ def main(expt_name,
                 best_loss = val_loss
 
             tf.keras.backend.set_session(default_keras_session)
+
     print("*** Running tests ***")
     tf.reset_default_graph()
     with tf.Graph().as_default(), tf.Session(config=tf_config) as sess:
-        joblib.dump(opt_manager, 'job_opt.pkl')
-        with open('opt_manager.pickle', 'wb') as f:
-            pkl.dump(opt_manager, f)
         tf.keras.backend.set_session(sess)
         best_params = opt_manager.get_best_params()
         model = ModelClass(best_params, use_cudnn=use_gpu)
