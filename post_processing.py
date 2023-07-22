@@ -53,7 +53,7 @@ with tf.Graph().as_default(), tf.Session(config=tf_config) as sess:
     tf.keras.backend.set_session(sess)
     best_params = opt_manager.get_best_params()
     model = ModelClass(best_params, use_cudnn=use_gpu)
-
+    opt_manager = joblib.load('job_opt.pkl')
     model.load(opt_manager.hyperparam_folder)
 #checkpoint_path = os.path.join('output', 'saved_models', 'ohlc', 'fixed', 'checkpoint')
 #model = joblib.load('model.pkl')

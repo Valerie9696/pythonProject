@@ -126,7 +126,7 @@ def main(expt_name,
 
             params = opt_manager.get_next_parameters()
             model = ModelClass(params, use_cudnn=use_gpu)
-            mf = os.path.join('output', 'saved_models', 'ohlc', 'fixed')
+            #mf = os.path.join('output', 'saved_models', 'ohlc', 'fixed')
             #model.load(model_folder=mf, use_keras_loadings=True)
 
             if not model.training_data_cached():
@@ -139,7 +139,11 @@ def main(expt_name,
             val_loss = model.evaluate()
             model.save(model_folder=os.path.join('cache', 'model_folder'))
             model.save("trained_model.keras")
-            dill.dump(model, 'model.dill')
+            model.model.save(os.path.join('saves','model'))
+            model_json = model.model.to_json()
+            with open("model_json.json", "w") as json_file:
+                json_file.write(model_json)
+            model.model.save_weights("model_weights.h5")
             if val_loss < best_loss:
                 opt_manager.update_score(params, val_loss, model)
                 best_loss = val_loss
@@ -148,8 +152,7 @@ def main(expt_name,
 
     print("*** Running tests ***")
     #joblib.dump(opt_manager, 'job_opt.pkl')
-    #with open('opt_manager.pickle', 'wb') as f:
-     #   pkl.dump(opt_manager, f)
+    dill.dump(opt_manager, 'opt_manager.dill')
     tf.reset_default_graph()
     with tf.Graph().as_default(), tf.Session(config=tf_config) as sess:
         tf.keras.backend.set_session(sess)
