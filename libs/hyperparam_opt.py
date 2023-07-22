@@ -110,12 +110,15 @@ class HyperparamOptManager:
   def _get_params_from_name(self, name):
     """Returns previously saved parameters given a key."""
     params = self.saved_params
-
-    selected_params = dict(params[name])
+    if not params.empty:
+      selected_params = dict(params[name])
 
     if self._override_w_fixed_params:
-      for k in self.fixed_params:
-        selected_params[k] = self.fixed_params[k]
+      try:
+        for k in self.fixed_params:
+          selected_params[k] = self.fixed_params[k]
+      except:
+        selected_params = self.fixed_params
 
     return selected_params
 

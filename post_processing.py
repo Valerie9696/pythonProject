@@ -1,4 +1,7 @@
+import json
 import pickle as pkl
+
+import dill
 import keras
 import pandas as pd
 import tensorflow.compat.v1 as tf
@@ -13,28 +16,15 @@ import libs
 import pandas as pd
 import matplotlib.pyplot as plt
 
-from keras.models import model_from_json
-with open("model_json.json", "r") as json_file:
-    loaded_model_json = json_file.read()
-    json_file.close()
-loaded_model = model_from_json(loaded_model_json)
-# load weights into new model
-loaded_model.load_weights("model_weights.h5")
-print("Loaded model from disk")
 
 # load dataset
-df = pd.read_csv(os.path.join('output','data','ohlc','ohlc.csv'))
-df['Datetime'] = pd.to_datetime(df['Datetime'])
-min_date = df['Datetime'].agg(['min'])[0]
-max_date = df['Datetime'].agg(['max'])[0]
-valid_boundary = min_date+(max_date-min_date)/2
-test_boundary = valid_boundary+((max_date-min_date)/4)
+ExperimentConfig = expt_settings.configs.ExperimentConfig
+config = ExperimentConfig('ohlc', 'output')
+data_formatter = config.make_data_formatter()
+data_csv_path = os.path.join('output','data','ohlc','ohlc.csv')
+raw_data = pd.read_csv(data_csv_path, index_col=0)
+train, valid, test = data_formatter.split_data(raw_data)
 
-index = df['Datetime']
-train = df.loc[index < valid_boundary]
-valid = df.loc[(index >= valid_boundary) & (index < test_boundary)]
-test = df.loc[(index >= test_boundary)] #& (df.index <= '2019-06-28')]
-print('Formatting train-valid-test splits.')
 
 #load the model
 model_folder = os.path.join('output', 'saved_models', 'ohlc', 'fixed')
@@ -55,22 +45,43 @@ if use_gpu:
 
 else:
     tf_config = utils.get_default_tensorflow_config(tf_device="cpu")
+with tf.Graph().as_default(), tf.Session(config=tf_config) as sess:
+    tf.keras.backend.set_session(sess)
+    #model = utils.load(tf_session=sess, model_folder='trained_model', cp_name='TemporalFusionTransformer')
+
+a = dill.loads(
+    b"\x80\x04\x95P\x04\x00\x00\x00\x00\x00\x00XI\x04\x00\x00[10, 5, 20]_[('Symbol', <DataTypes.CATEGORICAL: 1>, <InputTypes.ID: 4>), ('Datetime', <DataTypes.DATE: 2>, <InputTypes.TIME: 5>), ('Open', <DataTypes.REAL_VALUED: 0>, <InputTypes.OBSERVED_INPUT: 1>), ('High', <DataTypes.REAL_VALUED: 0>, <InputTypes.OBSERVED_INPUT: 1>), ('Low', <DataTypes.REAL_VALUED: 0>, <InputTypes.OBSERVED_INPUT: 1>), ('HighLowDifference', <DataTypes.REAL_VALUED: 0>, <InputTypes.OBSERVED_INPUT: 1>), ('OpenCloseDifference', <DataTypes.REAL_VALUED: 0>, <InputTypes.OBSERVED_INPUT: 1>), ('ATR', <DataTypes.REAL_VALUED: 0>, <InputTypes.OBSERVED_INPUT: 1>), ('RSI', <DataTypes.REAL_VALUED: 0>, <InputTypes.OBSERVED_INPUT: 1>), ('Close', <DataTypes.REAL_VALUED: 0>, <InputTypes.TARGET: 0>), ('HoursFromStart', <DataTypes.REAL_VALUED: 0>, <InputTypes.KNOWN_INPUT: 2>), ('HourOfDay', <DataTypes.CATEGORICAL: 1>, <InputTypes.KNOWN_INPUT: 2>), ('DayOfWeek', <DataTypes.CATEGORICAL: 1>, <InputTypes.KNOWN_INPUT: 2>), ('StatSymbol', <DataTypes.CATEGORICAL: 1>, <InputTypes.STATIC_INPUT: 3>)]_0.1_5_5_[7]_12_[0, 1, 2]_[8]_0.01_1.0_64_output\\saved_models\\ohlc\\fixed_5_252_1_1_1_1_[11]_257\x94.")
+with open('optimal_name.json', 'rb') as f:
+    j = json.load(f)
+    f.close()
+opt_manager.optimal_name = a  # dill.loads(b'\x80\x04\x95\x04\x00\x00\x00\x00\x00\x00\x00\x8c\x00\x94.')
+opt_manager.hyperparam_folder = os.path.join('output','saved_models','ohlc','fixed')
+opt_manager._override_w_fixed_params = True
+with open('fixed_params.json', 'rb') as b:
+    #j = json.load(b)
+    opt_manager.fixed_params = json.load(b)
+    b.close()
 
 with tf.Graph().as_default(), tf.Session(config=tf_config) as sess:
     tf.keras.backend.set_session(sess)
     best_params = opt_manager.get_best_params()
-    model = ModelClass(best_params, use_cudnn=use_gpu)
-    opt_manager = joblib.load('job_opt.pkl')
+    #with open('optimal_name.txt', 'r') as f:
+     #   opt_manager.optimal_name = dill.load(f)
+    sess.run(tf.global_variables_initializer())
+    model = ModelClass(raw_params=best_params, use_cudnn=use_gpu)
+    #model.model.load_weights(filepath='trained_model')
     model.load(opt_manager.hyperparam_folder)
+    #for i in range(0, len(test)):
+        #row = test.iloc[i]
+    pred = model.predict(test, return_targets=True)
+    a=0
 #checkpoint_path = os.path.join('output', 'saved_models', 'ohlc', 'fixed', 'checkpoint')
 #model = joblib.load('model.pkl')
 #model.load_weights(checkpoint_path)
 #model = tf.keras.models.load_model(filepath=model_folder, compile=False)#pkl.load('model.pickle')#utils.load(tf_session=tf.compat.v1.keras.backend.get_session(),model_folder=model_folder, cp_name='TemporalFusionTransformer', scope='TemporalFusionTransformer')
-#trained_model = keras.models.load_model("trained_model.keras")
+#trained_model = keras.models.load_model("trained_model")
 
-for i in range(0,len(test)):
-    row = test.iloc[i]
-    pred = model.predict(row)
+
     #if prediction mean is higher than t0, sell, if lower, buy
 
 file = open('output_mape.pickle', 'rb')

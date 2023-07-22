@@ -35,6 +35,7 @@ import os
 
 import joblib
 import dill
+import json
 
 import data_formatters.base
 import expt_settings.configs
@@ -73,7 +74,6 @@ def main(expt_name,
     """
 
     num_repeats = 1
-    print(os.path.join('cache', 'model_folder'))
     if not isinstance(data_formatter, data_formatters.base.GenericDataFormatter):
         raise ValueError(
             "Data formatters should inherit from" +
@@ -138,7 +138,8 @@ def main(expt_name,
 
             val_loss = model.evaluate()
             model.save(model_folder=os.path.join('cache', 'model_folder'))
-            model.save("trained_model.keras")
+            model.save("trained_model")
+
 
             if val_loss < best_loss:
                 opt_manager.update_score(params, val_loss, model)
@@ -147,28 +148,31 @@ def main(expt_name,
             tf.keras.backend.set_session(default_keras_session)
 
     print("*** Running tests ***")
-    joblib.dump(opt_manager, 'job_opt.pkl')
-    dill.dump(opt_manager, 'opt_manager.dill')
     tf.reset_default_graph()
     with tf.Graph().as_default(), tf.Session(config=tf_config) as sess:
         tf.keras.backend.set_session(sess)
         best_params = opt_manager.get_best_params()
         model = ModelClass(best_params, use_cudnn=use_gpu)
-
+        # with open('optimal_name.txt', 'wb') as f:
+        out_file = open("optimal_name.json", "w")
+        json.dump(opt_manager.optimal_name, out_file, indent=6)
+        out_file.close()
+        out_file = open("fixed_params.json", "w")
+        json.dump(opt_manager.fixed_params, out_file, indent=6)
+        out_file.close()
+        aaa = dill.dumps(opt_manager.optimal_name)
+        model.model.save_weights('weights.h5')
         model.load(opt_manager.hyperparam_folder)
         #joblib.dump(model, 'model.pkl')
         print("Computing best validation loss")
         print(valid)
         val_loss = model.evaluate(data=valid)
-
         print("Computing test loss")
         output_map = model.predict(test, return_targets=True)
         #np.savetxt("output_mape.csv", output_map, delimiter=",")
         targets = data_formatter.format_predictions(output_map["targets"])
         with open('targets.pickle', 'wb') as f:
             pkl.dump(targets, f)
-        with open('model.pickle', 'wb') as m:
-            pkl.dump(model, m)
         p50_forecast = data_formatter.format_predictions(output_map["p50"])
         p90_forecast = data_formatter.format_predictions(output_map["p90"])
 
@@ -194,8 +198,6 @@ def main(expt_name,
 
     for k in best_params:
         print(k, " = ", best_params[k])
-    joblib.dump(opt_manager, 'job_opt.pkl')
-    dill.dump(opt_manager, 'opt_manager.dill')
 
     print("Normalised Quantile Loss for Test Data: P50={}, P90={}".format(
         p50_loss.mean(), p90_loss.mean()))
@@ -254,4 +256,4 @@ if __name__ == "__main__":
         model_folder=os.path.join(config.model_folder, "fixed"),
         data_csv_path=config.data_csv_path,
         data_formatter=formatter,
-        use_testing_mode=False)  # Change to false to use original default params
+        use_testing_mode=True)  # Change to false to use original default params

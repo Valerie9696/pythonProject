@@ -448,20 +448,20 @@ class TemporalFusionTransformer(object):
     # Network params
     self.quantiles = [0.1, 0.5, 0.9]
     self.use_cudnn = use_cudnn  # Whether to use GPU optimised LSTM
-    self.hidden_layer_size = int(params['hidden_layer_size'])
-    self.dropout_rate = float(params['dropout_rate'])
-    self.max_gradient_norm = float(params['max_gradient_norm'])
-    self.learning_rate = float(params['learning_rate'])
-    self.minibatch_size = int(params['minibatch_size'])
+    self.hidden_layer_size = 10# marker int(params['hidden_layer_size'])
+    self.dropout_rate = 0.4#float(params['dropout_rate'])
+    self.max_gradient_norm = 100#float(params['max_gradient_norm'])
+    self.learning_rate = 0.001#float(params['learning_rate'])
+    self.minibatch_size = 128#int(params['minibatch_size'])
     self.num_epochs = int(params['num_epochs'])
     self.early_stopping_patience = int(params['early_stopping_patience'])
 
     self.num_encoder_steps = int(params['num_encoder_steps'])
-    self.num_stacks = int(params['stack_size'])
-    self.num_heads = int(params['num_heads'])
+    self.num_stacks = 1#int(params['stack_size'])
+    self.num_heads = 1#int(params['num_heads'])
 
     # Serialisation options
-    self._temp_folder = os.path.join(params['model_folder'], 'tmp')
+    self._temp_folder = 'trained_model'#os.path.join(params['model_folder'], 'tmp')
     self.reset_temp_folder()
 
     # Extra components to store Tensorflow nodes for attention computations
