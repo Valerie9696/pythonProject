@@ -126,8 +126,6 @@ def main(expt_name,
 
             params = opt_manager.get_next_parameters()
             model = ModelClass(params, use_cudnn=use_gpu)
-            #mf = os.path.join('output', 'saved_models', 'ohlc', 'fixed')
-            #model.load(model_folder=mf, use_keras_loadings=True)
 
             if not model.training_data_cached():
                 model.cache_batched_data(train, "train", num_samples=train_samples)
@@ -153,23 +151,18 @@ def main(expt_name,
         tf.keras.backend.set_session(sess)
         best_params = opt_manager.get_best_params()
         model = ModelClass(best_params, use_cudnn=use_gpu)
-        # with open('optimal_name.txt', 'wb') as f:
         out_file = open("optimal_name.json", "w")
         json.dump(opt_manager.optimal_name, out_file, indent=6)
         out_file.close()
         out_file = open("fixed_params.json", "w")
         json.dump(opt_manager.fixed_params, out_file, indent=6)
         out_file.close()
-        aaa = dill.dumps(opt_manager.optimal_name)
-        model.model.save_weights('weights.h5')
         model.load(opt_manager.hyperparam_folder)
-        #joblib.dump(model, 'model.pkl')
         print("Computing best validation loss")
         print(valid)
         val_loss = model.evaluate(data=valid)
         print("Computing test loss")
         output_map = model.predict(test, return_targets=True)
-        #np.savetxt("output_mape.csv", output_map, delimiter=",")
         targets = data_formatter.format_predictions(output_map["targets"])
         with open('targets.pickle', 'wb') as f:
             pkl.dump(targets, f)
@@ -256,4 +249,4 @@ if __name__ == "__main__":
         model_folder=os.path.join(config.model_folder, "fixed"),
         data_csv_path=config.data_csv_path,
         data_formatter=formatter,
-        use_testing_mode=True)  # Change to false to use original default params
+        use_testing_mode=False)  # Change to false to use original default params

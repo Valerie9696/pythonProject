@@ -57,9 +57,9 @@ with tf.Graph().as_default(), tf.Session(config=tf_config) as sess:
     tf.keras.backend.set_session(sess)
 
 with open('optimal_name.json', 'rb') as f:
-    j = json.load(f)
+    opt_manager.optimal_name = json.load(f)
     f.close()
-opt_manager.optimal_name = dill.loads(b"\x80\x04\x95P\x04\x00\x00\x00\x00\x00\x00XI\x04\x00\x00[10, 5, 20]_[('Symbol', <DataTypes.CATEGORICAL: 1>, <InputTypes.ID: 4>), ('Datetime', <DataTypes.DATE: 2>, <InputTypes.TIME: 5>), ('Open', <DataTypes.REAL_VALUED: 0>, <InputTypes.OBSERVED_INPUT: 1>), ('High', <DataTypes.REAL_VALUED: 0>, <InputTypes.OBSERVED_INPUT: 1>), ('Low', <DataTypes.REAL_VALUED: 0>, <InputTypes.OBSERVED_INPUT: 1>), ('HighLowDifference', <DataTypes.REAL_VALUED: 0>, <InputTypes.OBSERVED_INPUT: 1>), ('OpenCloseDifference', <DataTypes.REAL_VALUED: 0>, <InputTypes.OBSERVED_INPUT: 1>), ('ATR', <DataTypes.REAL_VALUED: 0>, <InputTypes.OBSERVED_INPUT: 1>), ('RSI', <DataTypes.REAL_VALUED: 0>, <InputTypes.OBSERVED_INPUT: 1>), ('Close', <DataTypes.REAL_VALUED: 0>, <InputTypes.TARGET: 0>), ('HoursFromStart', <DataTypes.REAL_VALUED: 0>, <InputTypes.KNOWN_INPUT: 2>), ('HourOfDay', <DataTypes.CATEGORICAL: 1>, <InputTypes.KNOWN_INPUT: 2>), ('DayOfWeek', <DataTypes.CATEGORICAL: 1>, <InputTypes.KNOWN_INPUT: 2>), ('StatSymbol', <DataTypes.CATEGORICAL: 1>, <InputTypes.STATIC_INPUT: 3>)]_0.1_5_5_[7]_12_[0, 1, 2]_[8]_0.01_1.0_64_output\\saved_models\\ohlc\\fixed_5_252_1_1_1_1_[11]_257\x94.")
+
 opt_manager.hyperparam_folder = os.path.join('output','saved_models','ohlc','fixed')
 opt_manager._override_w_fixed_params = True
 with open('fixed_params.json', 'rb') as b:
