@@ -765,8 +765,11 @@ class TemporalFusionTransformer(object):
     # Combine all data
     for k in data_map:
         #print(data_map[k])
-        if data_map[k] is not None:
-            data_map[k] = np.concatenate(data_map[k], axis=0)
+        try:
+            if data_map[k] is not None:
+                data_map[k] = np.concatenate(data_map[k], axis=0)
+        except:
+            a=0
 
     # Shorten target so we only get decoder steps
     data_map['outputs'] = data_map['outputs'][:, self.num_encoder_steps:, :]

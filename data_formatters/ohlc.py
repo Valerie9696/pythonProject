@@ -83,20 +83,21 @@ class OHLCFormatter(GenericDataFormatter):
       Tuple of transformed (train, valid, test) data.
     """
     df['Datetime'] = pd.to_datetime(df['Datetime'])
-    min_date = df['Datetime'].agg(['min'])[0]
-    max_date = df['Datetime'].agg(['max'])[0]
-    valid_boundary = min_date+(max_date-min_date)/2
-    test_boundary = valid_boundary+((max_date-min_date)/4)
+    if len(df)>1:
+        min_date = df['Datetime'].agg(['min'])[0]
+        max_date = df['Datetime'].agg(['max'])[0]
+        valid_boundary = min_date+(max_date-min_date)/2
+        test_boundary = valid_boundary+((max_date-min_date)/4)
 
-    index = df['Datetime']
-    train = df.loc[index < valid_boundary]
-    valid = df.loc[(index >= valid_boundary) & (index < test_boundary)]
-    test = df.loc[(index >= test_boundary)] #& (df.index <= '2019-06-28')]
-    print('Formatting train-valid-test splits.')
-
-    self.set_scalers(df)
-
-    return (self.transform_inputs(data) for data in [train, valid, test])
+        index = df['Datetime']
+        train = df.loc[index < valid_boundary]
+        valid = df.loc[(index >= valid_boundary) & (index < test_boundary)]
+        test = df.loc[(index >= test_boundary)] #& (df.index <= '2019-06-28')]
+        print('Formatting train-valid-test splits.')
+        self.set_scalers(df)
+        return (self.transform_inputs(data) for data in [train, valid, test])
+    else:
+        return self.transform_inputs(df)
 
   def set_scalers(self, df):
     """Calibrates scalers using the data supplied.
@@ -179,7 +180,6 @@ class OHLCFormatter(GenericDataFormatter):
     for col in categorical_inputs:
       string_df = df[col].apply(str)
       output[col] = self._cat_scalers[col].transform(string_df)
-
     return output
 
   def format_predictions(self, predictions):
